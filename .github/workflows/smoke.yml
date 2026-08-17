@@ -1,0 +1,30 @@
+name: pqv-smoke
+on: [push, workflow_dispatch]
+permissions:
+  contents: read
+  security-events: write
+jobs:
+  packaging:
+    runs-on: ubuntu-latest
+    steps:
+      - run: pip install "pq-verify[full]"
+      - run: |
+          python - <<'EOF'
+          import pathlib, pq_verify
+          d = pathlib.Path(pq_verify.__file__).parent / "vectors"
+          print("vectors dir:", d, d.exists())
+          for f in sorted(d.glob("*"))[:20]:
+              print(f.name, f.stat().st_size)
+          EOF
+      - run: pq-verify --acvp-all
+  action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: bigDSanalyst/pq-verify@main
+        id: pqv
+      - run: |
+          echo "verified=${{ steps.pqv.outputs.verified }}"
+          echo "findings=${{ steps.pqv.outputs.findings }}"
+      - uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.pqv.outputs.sarif-file }}
