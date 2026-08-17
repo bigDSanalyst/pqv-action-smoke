@@ -1,0 +1,31 @@
+name: pqv-negative
+on: workflow_dispatch
+jobs:
+  broken-so:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          cat > bad.c <<'EOF'
+          #include <stdint.h>
+          void ntt(int16_t *a){ (void)a; }
+          EOF
+          gcc -O2 -shared -fPIC -o bad.so bad.c
+      - uses: bigDSanalyst/pq-verify@main
+        id: pqv
+        continue-on-error: true
+        with:
+          library: bad.so
+          symbol: ntt
+      - run: |
+          test "${{ steps.pqv.outcome }}" = "failure" \
+            || { echo "IDENTITY NTT PASSED — do not tag v1"; exit 1; }
+  no-toolchain:
+    runs-on: ubuntu-latest
+    container: python:3.12-slim
+    steps:
+      - uses: bigDSanalyst/pq-verify@main
+        id: pqv
+        continue-on-error: true
+      - run: |
+          test "${{ steps.pqv.outcome }}" = "failure" \
+            || { echo "DEGRADED RUN REPORTED CLEAN — do not tag v1"; exit 1; }
