@@ -25,6 +25,12 @@ jobs:
       - run: |
           echo "verified=${{ steps.pqv.outputs.verified }}"
           echo "findings=${{ steps.pqv.outputs.findings }}"
+          echo "sarif=${{ steps.pqv.outputs.sarif-file }}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pqv-sarif
+          path: ${{ steps.pqv.outputs.sarif-file }}
       - uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ${{ steps.pqv.outputs.sarif-file }}
