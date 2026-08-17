@@ -21,11 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: bigDSanalyst/pq-verify@main
-        id: pqv
+        id: pvq 
       - run: |
-          echo "verified=${{ steps.pqv.outputs.verified }}"
-          echo "findings=${{ steps.pqv.outputs.findings }}"
-          echo "sarif=${{ steps.pqv.outputs.sarif-file }}"
+          echo "verified=[${{ steps.pqv.outputs.verified }}]"
+          echo "findings=[${{ steps.pqv.outputs.findings }}]"
+          echo "sarif=[${{ steps.pqv.outputs.sarif-file }}]"
+          echo "--- sarif files on disk ---"
+          find "$GITHUB_WORKSPACE" /home/runner/work -name '*.sarif' 2>/dev/null
       - uses: actions/upload-artifact@v4
         if: always()
         with:
