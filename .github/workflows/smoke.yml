@@ -21,18 +21,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: bigDSanalyst/pq-verify@main
-        id: pvq 
+        id: pqv
       - run: |
           echo "verified=[${{ steps.pqv.outputs.verified }}]"
           echo "findings=[${{ steps.pqv.outputs.findings }}]"
           echo "sarif=[${{ steps.pqv.outputs.sarif-file }}]"
-          echo "--- sarif files on disk ---"
-          find "$GITHUB_WORKSPACE" /home/runner/work -name '*.sarif' 2>/dev/null
+          echo "--- sarif on disk ---"
+          find /home/runner/work -name '*.sarif' 2>/dev/null || true
+          echo "--- json on disk ---"
+          find /home/runner/work -name '*.json' -newermt '-10 minutes' 2>/dev/null | head -20
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.pqv.outputs.sarif-file != ''
         with:
           name: pqv-sarif
           path: ${{ steps.pqv.outputs.sarif-file }}
       - uses: github/codeql-action/upload-sarif@v3
+        if: steps.pqv.outputs.sarif-file != ''
         with:
           sarif_file: ${{ steps.pqv.outputs.sarif-file }}
