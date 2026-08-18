@@ -23,6 +23,9 @@ jobs:
       - uses: bigDSanalyst/pq-verify@main
         id: pqv
       - run: |
+          echo "--- action.yml actually being used ---"
+          sed -n '1,20p;/else/,/fi/p' \
+            /home/runner/work/_actions/bigDSanalyst/pq-verify/main/action.yml
           echo "verified=[${{ steps.pqv.outputs.verified }}]"
           echo "findings=[${{ steps.pqv.outputs.findings }}]"
           echo "sarif=[${{ steps.pqv.outputs.sarif-file }}]"
