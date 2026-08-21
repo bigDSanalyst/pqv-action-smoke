@@ -11,7 +11,7 @@ jobs:
           EOF
           gcc -O2 -shared -fPIC -o bad.so bad.c
           nm -D bad.so | grep -i ntt
-      - uses: bigDSanalyst/pq-verify@main
+      - uses: bigDSanalyst/pq-verify@v1
         id: pqv
         continue-on-error: true
         with:
@@ -47,7 +47,7 @@ jobs:
           echo "PATH=/tmp/nogcc:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> $GITHUB_ENV
           printf '#!/bin/sh\nexit 127\n' > /tmp/nogcc/apt-get
           chmod +x /tmp/nogcc/apt-get
-      - uses: bigDSanalyst/pq-verify@main
+      - uses: bigDSanalyst/pq-verify@v1
         id: pqv
         continue-on-error: true
       - run: |
@@ -61,6 +61,6 @@ jobs:
   from-pypi:
     runs-on: ubuntu-latest
     steps:
-      - uses: bigDSanalyst/pq-verify@main
+      - uses: bigDSanalyst/pq-verify@v1
         with:
           version: pypi
