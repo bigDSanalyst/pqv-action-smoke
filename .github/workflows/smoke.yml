@@ -20,12 +20,12 @@ jobs:
   action:
     runs-on: ubuntu-latest
     steps:
-      - uses: bigDSanalyst/pq-verify@main
+      - uses: bigDSanalyst/pq-verify@v1
         id: pqv
       - run: |
           echo "--- action.yml actually being used ---"
           sed -n '1,20p;/else/,/fi/p' \
-            /home/runner/work/_actions/bigDSanalyst/pq-verify/main/action.yml
+            /home/runner/work/_actions/bigDSanalyst/pq-verify/v1/action.yml
           echo "verified=[${{ steps.pqv.outputs.verified }}]"
           echo "findings=[${{ steps.pqv.outputs.findings }}]"
           echo "sarif=[${{ steps.pqv.outputs.sarif-file }}]"
